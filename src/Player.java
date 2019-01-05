@@ -13,6 +13,7 @@ public class Player {
         this.type = type;
         this.radius = r;
         color = new Color(150, 150, 150);
+        complement = new Color(255, 255, 255);
         switch (team) {
             case 1: {
                 color = new Color(106, 197, 244);
@@ -23,21 +24,13 @@ public class Player {
             }
             break;
         }
-        float[] hsv = new float[3];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsv);
-        hsv[0] = (hsv[0] + 180) % 360;
-        complement = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
     }
 
     public boolean move(Tile dest, int dist) {
-        if (dest.p != null) {
-            if (dest.p.type <= type && dist <= type) {
-                return true;
-            }
-        } else if (dist <= type) {
-            return true;
-        }
-        return false;
+        if (dist > type) return false;
+        if (dest.p != null)
+            return dest.p.type <= type;
+        return true;
     }
 
     public void drawMe(Graphics2D g, double x, double y) {
