@@ -20,18 +20,15 @@ public class Tile implements Comparable {
         this.polygon = new Polygon();
         this.p = new Player(team, 0, radius);
         switch (team) {
-        case 1: {
-            color = new Color(106, 197, 244);
-        }
-            break;
-        case 2: {
-            color = new Color(252, 81, 11);
-        }
-            break;
-        default: {
-            color = new Color(150, 150, 150);
-        }
-            break;
+            case 1:
+                color = new Color(106, 197, 244);
+                break;
+            case 2:
+                color = new Color(252, 81, 11);
+                break;
+            default:
+                color = new Color(150, 150, 150);
+                break;
         }
         this.parent = null;
         this.up = null;
@@ -47,17 +44,19 @@ public class Tile implements Comparable {
     }
 
     public void addPlayer(Player newPlayer) {
-        if (newPlayer.move(0)) {
+        if (newPlayer.move(this, 0)) {
             p = newPlayer;
         }
     }
 
     public boolean movePlayer(Tile dest, int dist) {
-        if (!p.move(dist))
+        if (!p.move(dest, dist))
             return false;
         Player temp = p;
         p = new Player(team, 0, radius);
         dest.p = temp;
+        dest.team = team;
+        dest.color = color;
         return true;
     }
 
@@ -72,9 +71,11 @@ public class Tile implements Comparable {
         g.setColor(new Color(0, 0, 0));
         g.drawString(String.valueOf(distance), (int) (x - 4), (int) (y + 6));
     }
+
     public void drawMe(Graphics2D g, int a) {
         g.setColor(new Color(255, 255, 255, a));
         g.fillPolygon(polygon);
+        p.drawMe(g, x, y);
     }
 
     @Override

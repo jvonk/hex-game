@@ -41,6 +41,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         addTileDown(3, 0);
         addTileDownLeft(4, 1);
         tiles.get(4).addPlayer(new Player(1, 1, radius));
+        tiles.get(2).addPlayer(new Player(2, 2, radius));
         connect();
     }
 
@@ -220,7 +221,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         dijkstra();
         for (int i = 0; i < tiles.size(); i++) {
             tiles.get(i).drawMe(g, i == focus,
-                    tiles.get(focus).p == null ? false : (tiles.get(focus).p.move(tiles.get(i).distance)));
+                    tiles.get(focus).p == null ? false : (tiles.get(focus).p.move(tiles.get(i), tiles.get(i).distance)));
         }
         g.setColor(new Color(100, 0, 0));
         for (int i = 0; i < tiles.size(); i++)
