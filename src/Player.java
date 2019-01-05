@@ -9,8 +9,8 @@ public class Player {
         this.type=type;
         this.radius = r;
     }
-    public boolean move (Tile dest) {
-        return true;
+    public boolean move (int dist) {
+        return dist<=2;
     }
     public void drawMe(Graphics2D g, double x, double y) {
         switch(type) {
