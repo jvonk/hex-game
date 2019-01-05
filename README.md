@@ -1,2 +1,2 @@
 # hex-game
-![alt text](screenshot.png)
+![alt text](example.png)
