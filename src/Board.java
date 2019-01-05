@@ -7,7 +7,7 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class Board extends JPanel implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     private List<Tile> tiles;
-    public int focus;
+    public int focus, hover;
     public double wid, hei, radius, zoomFactor;
     public MouseEvent dragStart;
 
@@ -19,6 +19,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         hei = tk.getScreenSize().getHeight();
         level1();
         focus = 0;
+        hover = 0;
         addMouseWheelListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -47,6 +48,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         for (int i = 0; i < tiles.size(); i++) {
             tiles.get(i).id = i;
             tiles.get(i).distance = Integer.MAX_VALUE;
+            tiles.get(i).parent = null;
             tiles.get(i).visited = false;
         }
         PriorityQueue<Tile> heap = new PriorityQueue<Tile>();
@@ -219,13 +221,22 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         for (int i = 0; i < tiles.size(); i++) {
             tiles.get(i).drawMe(g, i == focus,
                     tiles.get(focus).p == null ? false : (tiles.get(focus).p.move(tiles.get(i).distance)));
-            g.setColor(new Color(255, 0, 0));
         }
+        g.setColor(new Color(100, 0, 0));
         for (int i = 0; i < tiles.size(); i++)
             if (tiles.get(i).parent != null)
                 g.drawLine((int) (tiles.get(i).x), (int) (tiles.get(i).y), (int) (tiles.get(i).parent.x),
                         (int) (tiles.get(i).parent.y));
-
+        Set<Integer> visited = new HashSet<Integer>();
+        Tile parent = tiles.get(hover);
+        g.setColor(new Color(255, 0, 0));
+        while (parent.parent != null) {
+            if (visited.contains(parent.id)) break;
+            visited.add(parent.id);
+            g.drawLine((int) (parent.x), (int) (parent.y), (int) (parent.parent.x),
+            (int) (parent.parent.y));
+            parent=parent.parent;
+        }
     }
 
     public Dimension getPreferredSize() {
@@ -265,6 +276,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                         dijkstra();
                         if (tiles.get(focus).movePlayer(tiles.get(i), tiles.get(i).distance)) {
                             focus = i;
+                            hover = i;
                             repaint();
                         }
                     }
@@ -288,6 +300,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         for (int i = 0; i < tiles.size(); i++) {
             if (tiles.get(i).polygon.contains((newx + wid / 2) / zoomFactor, (newy + hei / 2) / zoomFactor)) {
                 focus = i;
+                hover = i;
                 repaint();
                 break;
             }
@@ -303,6 +316,19 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
     @Override
     public void mouseMoved(MouseEvent e) {
         dragStart = null;
+        Point p = e.getLocationOnScreen();
+        double newx = (tiles.get(focus).x * zoomFactor - wid / 2) + p.getX() - wid / 2;
+        double newy = (tiles.get(focus).y * zoomFactor - hei / 2) + p.getY() - hei / 2;
+        for (int i = 0; i < tiles.size(); i++) {
+            if (tiles.get(i).polygon.contains((newx + wid / 2) / zoomFactor, (newy + hei / 2) / zoomFactor)) {
+                if (tiles.get(focus).p.type > 0) {
+                    dijkstra();
+                    hover = i;
+                    repaint();
+                }
+                break;
+            }
+        }
     }
 
     @Override
