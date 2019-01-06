@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.Color;
 
 public class Tile implements Comparable {
-    public int id, team, distance;
+    public int id, team, type, distance, component, value, difficulty;
     public boolean visited;
     public double x, y, radius;
     public Polygon polygon;
@@ -11,9 +11,13 @@ public class Tile implements Comparable {
     public Player p;
     public Color color;
 
-    public Tile(int id, int team, double x, double y, double r) {
+    public Tile(int id, int team, int type, double x, double y, double r) {
         this.id = id;
         this.team = team;
+        this.type = type;
+        this.component = -1;
+        this.value = 1;
+        this.difficulty = 1;
         this.x = x;
         this.y = y;
         this.radius = r;
@@ -42,7 +46,9 @@ public class Tile implements Comparable {
                     (int) (Math.round(Math.sin(Math.PI * i / 3) * this.radius + this.y)));
         }
     }
-
+    public boolean isConnected(Tile other) {
+        return (this.up!=null&&this.up.id==other.id || this.upright!=null&&this.upright.id==other.id || this.downright!=null&&this.downright.id==other.id || this.down!=null&&this.down.id==other.id || this.downleft!=null&&this.downleft.id==other.id || this.upleft!=null&&this.upleft.id==other.id);
+    }
     public void addPlayer(Player newPlayer) {
         if (newPlayer.move(this, 0)) {
             p = newPlayer;
