@@ -69,31 +69,42 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         connect();
     }
 
-    private void fixTeam() {
+    private void fixTeam(Tile j) {
         int[] vals = new int[max + 1];
         Arrays.fill(vals, 1);
-        int change = 2;
-        if (tiles.get(tiles.size() - 1).up != null)
-            vals[tiles.get(tiles.size() - 1).up.team] *= change;
-        if (tiles.get(tiles.size() - 1).upright != null)
-            vals[tiles.get(tiles.size() - 1).upright.team] *= change;
-        if (tiles.get(tiles.size() - 1).downright != null)
-            vals[tiles.get(tiles.size() - 1).downright.team] *= change;
-        if (tiles.get(tiles.size() - 1).down != null)
-            vals[tiles.get(tiles.size() - 1).down.team] *= change;
-        if (tiles.get(tiles.size() - 1).downleft != null)
-            vals[tiles.get(tiles.size() - 1).downleft.team] *= change;
-        if (tiles.get(tiles.size() - 1).upleft != null)
-            vals[tiles.get(tiles.size() - 1).upleft.team] *= change;
+        double change = 10;
+        if (j.up != null) {
+            vals[j.up.team] *= 2;
+            vals[j.up.team] += change;
+        }
+        if (j.upright != null) {
+            vals[j.upright.team] *= 2;
+            vals[j.upright.team] += change;
+        }
+        if (j.downright != null) {
+            vals[j.downright.team] *= 2;
+            vals[j.downright.team] += change;
+        }
+        if (j.down != null) {
+            vals[j.down.team] *= 2;
+            vals[j.down.team] += change;
+        }
+        if (j.downleft != null) {
+            vals[j.downleft.team] *= 2;
+            vals[j.downleft.team] += change;
+        }
+        if (j.upleft != null) {
+            vals[j.upleft.team] *= 2;
+            vals[j.upleft.team] += change;
+        }
         int[] x = count();
         for (int i = 0; i <= max; i++) {
-            vals[i] *= (tiles.size() - x[i]);
-            vals[i] *= (tiles.size() - x[i]);
+            vals[i] *= Math.pow(tiles.size() - x[i], 4);
         }
         double k = Math.random() * Arrays.stream(vals).sum();
         for (int n = 0; n < vals.length; n++) {
             if (k <= vals[n]) {
-                tiles.get(tiles.size() - 1).team = n;
+                j.team = n;
                 break;
             }
         }
@@ -115,56 +126,50 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
             switch (j) {
             case 0: {
                 if (tiles.get(i).up == null) {
-                    addTileUp(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileUp(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             case 1: {
                 if (tiles.get(i).upright == null) {
-                    addTileUpRight(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileUpRight(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             case 2: {
                 if (tiles.get(i).downright == null) {
-                    addTileDownRight(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileDownRight(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             case 3: {
                 if (tiles.get(i).down == null) {
-                    addTileDown(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileDown(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             case 4: {
                 if (tiles.get(i).downleft == null) {
-                    addTileDownLeft(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileDownLeft(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             case 5: {
                 if (tiles.get(i).upleft == null) {
-                    addTileUpLeft(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
-                            (int) (Math.pow(Math.random(), 8) * 5));
-                    fixTeam();
+                    addTileUpLeft(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
+                    fixTeam(tiles.get(tiles.size()-1));
                 }
             }
                 break;
             }
             connect();
         }
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             int[] vals = countPlayers();
             for (int j = 0; j <= max; j++) {
                 vals[j] = (int) Math.pow(tiles.size() - vals[j], 2);
@@ -176,10 +181,17 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                     while (n != tiles.get(j).team) {
                         j = (int) (Math.random() * tiles.size());
                     }
-                    tiles.get(j).addPlayer(
-                            new Player(tiles.get(j).team, (int) (Math.pow(Math.random(), 4) * 4 + 1), radius));
+                    tiles.get(j).addPlayer(new Player(tiles.get(j).team, (int) (Math.pow(Math.random(), 4) * 4 + 1), radius));
                     break;
                 }
+            }
+        }
+        for (int i = 0; i < tiles.size(); i++) {
+            if (tiles.get(i).p!=null) {
+                if (tiles.get(i).team!=0)
+                tiles.get(i).p.team = tiles.get(i).team;
+                else 
+                tiles.get(i).team = tiles.get(i).p.team;
             }
         }
     }
@@ -286,8 +298,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
     public void connect() {
         for (int n = 0; n < 10; n++) // ensure that things 100 blocks away are connected
             for (int i = 0; i < tiles.size(); i++) {
-                connect(i);
-                tiles.get(i).radius = radius;
+                connect(tiles.get(i), -1);
                 // clockwise
                 if (tiles.get(i).up != null && tiles.get(i).up.downright != null) {
                     tiles.get(i).upright = tiles.get(i).up.downright;
@@ -329,80 +340,71 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
             }
     }
 
-    public void connect(int i) {
-        tiles.get(i).radius = radius;
+    private void check(Tile b, Tile c, Tile i, int j) {
+        if (c.id != b.id) {
+            c = b;
+            if (c.id != j)
+                connect(c, i.id);
+            if (b.id != j)
+                connect(b, i.id);
+        }
+    }
+
+    private void connect(Tile i, int j) {
+        i.radius = radius;
         // clockwise
-        if (tiles.get(i).up != null && tiles.get(i).up.downright != null
-                && tiles.get(i).upright!=null&& tiles.get(i).upright.id != tiles.get(i).up.downright.id) {
-            tiles.get(i).upright = tiles.get(i).up.downright;
-            connect(tiles.get(i).upright.id);
-            connect(tiles.get(i).up.downright.id);
+        if (i.up!=null && i.up.downright!=null && i.upright!=null) check(i.up.downright, i.upright, i, j);
+        if (i.upright != null && i.upright.down != null && i.downright != null) check(i.upright.down, i.downright, i, j);
+        if (i.downright != null && i.downright.downleft != null && i.down != null) check(i.downright.downleft, i.down, i, j);
+        if (i.down != null && i.down.upleft != null && i.downleft != null) check(i.down.upleft, i.downleft, i, j);
+        if (i.downleft != null && i.downleft.up != null && i.upleft != null
+                && i.upleft.id != i.downleft.up.id) {
+            i.upleft = i.downleft.up;
+            connect(i.upleft, i.id);
+            connect(i.downleft.up, i.id);
         }
-        if (tiles.get(i).upright != null && tiles.get(i).upright.down != null
-                && tiles.get(i).downright!=null && tiles.get(i).downright.id != tiles.get(i).upright.down.id) {
-            tiles.get(i).downright = tiles.get(i).upright.down;
-            connect(tiles.get(i).downright.id);
-            connect(tiles.get(i).upright.down.id);
-        }
-        if (tiles.get(i).downright != null && tiles.get(i).downright.downleft != null
-        && tiles.get(i).down!=null && tiles.get(i).down.id != tiles.get(i).downright.downleft.id) {
-            tiles.get(i).down = tiles.get(i).downright.downleft;
-            connect(tiles.get(i).down.id);
-            connect(tiles.get(i).downright.downleft.id);
-        }
-        if (tiles.get(i).down != null && tiles.get(i).down.upleft != null
-        && tiles.get(i).downleft!=null&& tiles.get(i).downleft.id != tiles.get(i).down.upleft.id) {
-            tiles.get(i).downleft = tiles.get(i).down.upleft;
-            connect(tiles.get(i).downleft.id);
-            connect(tiles.get(i).down.upleft.id);
-        }
-        if (tiles.get(i).downleft != null && tiles.get(i).downleft.up != null
-        && tiles.get(i).upleft!=null&& tiles.get(i).upleft.id != tiles.get(i).downleft.up.id) {
-            tiles.get(i).upleft = tiles.get(i).downleft.up;
-            connect(tiles.get(i).upleft.id);
-            connect(tiles.get(i).downleft.up.id);
-        }
-        if (tiles.get(i).upleft != null && tiles.get(i).upleft.upright != null
-        && tiles.get(i).up!=null&& tiles.get(i).up.id != tiles.get(i).upleft.upright.id) {
-            tiles.get(i).up = tiles.get(i).upleft.upright;
-            connect(tiles.get(i).up.id);
-            connect(tiles.get(i).upleft.upright.id);
+        if (i.upleft != null && i.upleft.upright != null && i.up != null
+                && i.up.id != i.upleft.upright.id) {
+            i.up = i.upleft.upright;
+            connect(i.up, i.id);
+            connect(i.upleft.upright, i.id);
         }
         // counterclockwise
-        if (tiles.get(i).downright != null && tiles.get(i).downright.up != null
-        && tiles.get(i).upright!=null&& tiles.get(i).upright.id != tiles.get(i).downright.up.id) {
-            tiles.get(i).upright = tiles.get(i).downright.up;
-            connect(tiles.get(i).upright.id);
+        if (i.downright != null && i.downright.up != null && i.upright != null
+                && i.upright.id != i.downright.up.id) {
+            i.upright = i.downright.up;
+            connect(i.upright, i.id);
+            connect(i.downright.up, i.id);
         }
-        if (tiles.get(i).down != null && tiles.get(i).down.upright != null
-        && tiles.get(i).downright!=null&& tiles.get(i).downright.id != tiles.get(i).down.upright.id) {
-            tiles.get(i).downright = tiles.get(i).down.upright;
-            connect(tiles.get(i).downright.id);
-            connect(tiles.get(i).down.upright.id);
+        if (i.down != null && i.down.upright != null && i.downright != null
+                && i.downright.id != i.down.upright.id) {
+            i.downright = i.down.upright;
+            connect(i.downright, i.id);
+            connect(i.down.upright, i.id);
         }
-        if (tiles.get(i).downleft != null && tiles.get(i).downleft.downright != null
-        && tiles.get(i).down!=null&& tiles.get(i).down.id != tiles.get(i).downleft.downright.id) {
-            tiles.get(i).down = tiles.get(i).downleft.downright;
-            connect(tiles.get(i).down.id);
-            connect(tiles.get(i).downleft.downright.id);
+        if (i.downleft != null && i.downleft.downright != null && i.down != null
+                && i.down.id != i.downleft.downright.id) {
+            i.down = i.downleft.downright;
+            connect(i.down, i.id);
+            connect(i.downleft.downright, i.id);
         }
-        if (tiles.get(i).upleft != null && tiles.get(i).upleft.down != null
-        && tiles.get(i).downleft!=null&& tiles.get(i).downleft.id != tiles.get(i).upleft.down.id) {
-            tiles.get(i).downleft = tiles.get(i).upleft.down;
-            connect(tiles.get(i).downleft.id);
-            connect(tiles.get(i).upleft.down.id);
+        if (i.upleft != null && i.upleft.down != null && i.downleft != null
+                && i.downleft.id != i.upleft.down.id) {
+            i.downleft = i.upleft.down;
+            connect(i.downleft, i.id);
+            connect(i.upleft.down, i.id);
         }
-        if (tiles.get(i).up != null && tiles.get(i).up.downleft != null
-        && tiles.get(i).upleft!=null&& tiles.get(i).upleft.id != tiles.get(i).up.downleft.id) {
-            tiles.get(i).upleft = tiles.get(i).up.downleft;
-            connect(tiles.get(i).upleft.id);
-            connect(tiles.get(i).up.downleft.id);
+        if (i.up != null && i.up.downleft != null && i.upleft != null
+                && i.upleft.id != i.up.downleft.id) {
+            i.upleft = i.up.downleft;
+            connect(i.upleft, i.id);
+            connect(i.up.downleft, i.id);
         }
-        if (tiles.get(i).upright != null && tiles.get(i).upright.upleft != null
-        && tiles.get(i).up!=null&& tiles.get(i).up.id != tiles.get(i).upright.upleft.id) {
-            tiles.get(i).up = tiles.get(i).upright.upleft;
-            connect(tiles.get(i).up.id);
-            connect(tiles.get(i).upright.upleft.id);
+        if (i.upright != null && i.upright.upleft != null && i.up != null
+                && i.up.id != i.upright.upleft.id) {
+            i.up = i.upright.upleft;
+            connect(i.up, i.id);
+            connect(i.upright.upleft, i.id);
         }
 
     }
@@ -414,7 +416,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 radius));
         tiles.get(tiles.size() - 1).up = tiles.get(previd);
         tiles.get(previd).down = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void addTileUp(int previd, int team, int type) {
@@ -424,7 +426,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 radius));
         tiles.get(tiles.size() - 1).down = tiles.get(previd);
         tiles.get(previd).up = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void addTileDownRight(int previd, int team, int type) {
@@ -434,7 +436,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 tiles.get(previd).y + radius * Math.sqrt(3) / 2, radius));
         tiles.get(tiles.size() - 1).upleft = tiles.get(previd);
         tiles.get(previd).downright = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void addTileUpRight(int previd, int team, int type) {
@@ -444,7 +446,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 tiles.get(previd).y - radius * Math.sqrt(3) / 2, radius));
         tiles.get(tiles.size() - 1).downleft = tiles.get(previd);
         tiles.get(previd).upright = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void addTileDownLeft(int previd, int team, int type) {
@@ -454,7 +456,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 tiles.get(previd).y + radius * Math.sqrt(3) / 2, radius));
         tiles.get(tiles.size() - 1).upright = tiles.get(previd);
         tiles.get(previd).downleft = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void addTileUpLeft(int previd, int team, int type) {
@@ -464,7 +466,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 tiles.get(previd).y - radius * Math.sqrt(3) / 2, radius));
         tiles.get(tiles.size() - 1).downright = tiles.get(previd);
         tiles.get(previd).upleft = tiles.get(tiles.size() - 1);
-        connect(tiles.size() - 1);
+        connect(tiles.get(tiles.size() - 1), -1);
     }
 
     public void animate() {
