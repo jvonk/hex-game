@@ -127,42 +127,42 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
             case 0: {
                 if (tiles.get(i).up == null) {
                     addTileUp(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
             case 1: {
                 if (tiles.get(i).upright == null) {
                     addTileUpRight(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
             case 2: {
                 if (tiles.get(i).downright == null) {
                     addTileDownRight(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
             case 3: {
                 if (tiles.get(i).down == null) {
                     addTileDown(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
             case 4: {
                 if (tiles.get(i).downleft == null) {
                     addTileDownLeft(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
             case 5: {
                 if (tiles.get(i).upleft == null) {
                     addTileUpLeft(i, tiles.get(i).team, (int) (Math.pow(Math.random(), 8) * 5 + 1));
-                    fixTeam(tiles.get(tiles.size()-1));
+                    fixTeam(tiles.get(tiles.size() - 1));
                 }
             }
                 break;
@@ -181,18 +181,21 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                     while (n != tiles.get(j).team) {
                         j = (int) (Math.random() * tiles.size());
                     }
-                    tiles.get(j).addPlayer(new Player(tiles.get(j).team, (int) (Math.pow(Math.random(), 4) * 4 + 1), radius));
+                    tiles.get(j).addPlayer(
+                            new Player(tiles.get(j).team, (int) (Math.pow(Math.random(), 4) * 4 + 1), radius));
                     break;
                 }
             }
         }
+        for (int k = 0; k < 100; k++)
         for (int i = 0; i < tiles.size(); i++) {
-            if (tiles.get(i).p!=null) {
-                if (tiles.get(i).team!=0)
-                tiles.get(i).p.team = tiles.get(i).team;
-                else 
-                tiles.get(i).team = tiles.get(i).p.team;
+            if (tiles.get(i).p == null) continue;
+            if (tiles.get(i).team != 0) {
+                    tiles.get(i).p.team = tiles.get(i).team;
+            } else {
+                    tiles.get(i).team = tiles.get(i).p.team;
             }
+
         }
     }
 
@@ -353,31 +356,31 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
     private void connect(Tile i, int j) {
         i.radius = radius;
         // clockwise
-        if (i.up!=null && i.up.downright!=null && i.upright!=null) check(i.up.downright, i.upright, i, j);
-        if (i.upright != null && i.upright.down != null && i.downright != null) check(i.upright.down, i.downright, i, j);
-        if (i.downright != null && i.downright.downleft != null && i.down != null) check(i.downright.downleft, i.down, i, j);
-        if (i.down != null && i.down.upleft != null && i.downleft != null) check(i.down.upleft, i.downleft, i, j);
-        if (i.downleft != null && i.downleft.up != null && i.upleft != null
-                && i.upleft.id != i.downleft.up.id) {
+        if (i.up != null && i.up.downright != null && i.upright != null)
+            check(i.up.downright, i.upright, i, j);
+        if (i.upright != null && i.upright.down != null && i.downright != null)
+            check(i.upright.down, i.downright, i, j);
+        if (i.downright != null && i.downright.downleft != null && i.down != null)
+            check(i.downright.downleft, i.down, i, j);
+        if (i.down != null && i.down.upleft != null && i.downleft != null)
+            check(i.down.upleft, i.downleft, i, j);
+        if (i.downleft != null && i.downleft.up != null && i.upleft != null && i.upleft.id != i.downleft.up.id) {
             i.upleft = i.downleft.up;
             connect(i.upleft, i.id);
             connect(i.downleft.up, i.id);
         }
-        if (i.upleft != null && i.upleft.upright != null && i.up != null
-                && i.up.id != i.upleft.upright.id) {
+        if (i.upleft != null && i.upleft.upright != null && i.up != null && i.up.id != i.upleft.upright.id) {
             i.up = i.upleft.upright;
             connect(i.up, i.id);
             connect(i.upleft.upright, i.id);
         }
         // counterclockwise
-        if (i.downright != null && i.downright.up != null && i.upright != null
-                && i.upright.id != i.downright.up.id) {
+        if (i.downright != null && i.downright.up != null && i.upright != null && i.upright.id != i.downright.up.id) {
             i.upright = i.downright.up;
             connect(i.upright, i.id);
             connect(i.downright.up, i.id);
         }
-        if (i.down != null && i.down.upright != null && i.downright != null
-                && i.downright.id != i.down.upright.id) {
+        if (i.down != null && i.down.upright != null && i.downright != null && i.downright.id != i.down.upright.id) {
             i.downright = i.down.upright;
             connect(i.downright, i.id);
             connect(i.down.upright, i.id);
@@ -388,20 +391,17 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
             connect(i.down, i.id);
             connect(i.downleft.downright, i.id);
         }
-        if (i.upleft != null && i.upleft.down != null && i.downleft != null
-                && i.downleft.id != i.upleft.down.id) {
+        if (i.upleft != null && i.upleft.down != null && i.downleft != null && i.downleft.id != i.upleft.down.id) {
             i.downleft = i.upleft.down;
             connect(i.downleft, i.id);
             connect(i.upleft.down, i.id);
         }
-        if (i.up != null && i.up.downleft != null && i.upleft != null
-                && i.upleft.id != i.up.downleft.id) {
+        if (i.up != null && i.up.downleft != null && i.upleft != null && i.upleft.id != i.up.downleft.id) {
             i.upleft = i.up.downleft;
             connect(i.upleft, i.id);
             connect(i.up.downleft, i.id);
         }
-        if (i.upright != null && i.upright.upleft != null && i.up != null
-                && i.up.id != i.upright.upleft.id) {
+        if (i.upright != null && i.upright.upleft != null && i.up != null && i.up.id != i.upright.upleft.id) {
             i.up = i.upright.upleft;
             connect(i.up, i.id);
             connect(i.upright.upleft, i.id);
