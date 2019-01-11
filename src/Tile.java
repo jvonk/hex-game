@@ -105,7 +105,7 @@ public class Tile implements Comparable {
 
         //g.drawString(String.valueOf(distance), (int) (x - g.getFontMetrics().stringWidth(String.valueOf(distance))/2), (int) (y + g.getFontMetrics().getMaxAscent()/2 - g.getFontMetrics().getMaxDescent()/2));
         
-        g.drawString(String.valueOf(id), (int) (x - g.getFontMetrics().stringWidth(String.valueOf(id))/2), (int) (y + g.getFontMetrics().getMaxAscent()/2 - g.getFontMetrics().getMaxDescent()/2));
+        //g.drawString(String.valueOf(id), (int) (x - g.getFontMetrics().stringWidth(String.valueOf(id))/2), (int) (y + g.getFontMetrics().getMaxAscent()/2 - g.getFontMetrics().getMaxDescent()/2));
     }
 
     public void drawMe(Graphics2D g, int a) {
