@@ -284,7 +284,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
     }
 
     public void connect() {
-        for (int n = 0; n < 1; n++) // ensure that things 100 blocks away are connected
+        for (int n = 0; n < 10; n++) // ensure that things 100 blocks away are connected
             for (int i = 0; i < tiles.size(); i++) {
                 connect(i);
                 tiles.get(i).radius = radius;
