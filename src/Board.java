@@ -17,7 +17,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         Toolkit tk = Toolkit.getDefaultToolkit();
         wid = tk.getScreenSize().getWidth();
         hei = tk.getScreenSize().getHeight();
-        level1();
+        level2();
         turn = 1;
         focus = 0;
         hover = 0;
@@ -26,25 +26,159 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
         addMouseMotionListener(this);
         addKeyListener(this);
     }
-
+    public int[] count () {
+        int[] res = new int[max+1];
+        for (int i = 0; i < tiles.size(); i++) {
+            res[tiles.get(i).team]++;
+        }
+        return res;
+    }
+    public int[] countPlayers () {
+        int[] res = new int[max+1];
+        for (int i = 0; i < tiles.size(); i++) {
+            if (tiles.get(i).p!=null)
+            res[tiles.get(i).team]+=tiles.get(i).p.type;
+        }
+        return res;
+    }
     public void level1() {
         tiles = new ArrayList<Tile>();
-        tiles.add(new Tile(tiles.size(), 0, 1, 0, 0, radius));
-        addTileUp(0, 0, 1);
-        addTileUpRight(0, 2, 1);
-        addTileDownRight(0, 0, 2);
-        addTileDown(0, 1, 1);
-        addTileDownLeft(0, 1, 1);
-        addTileUpLeft(0, 1, 1);
-        addTileUpRight(2, 2, 1);
-        addTileUp(2, 2, 1);
-        addTileDownRight(2, 2, 1);
-        addTileDown(3, 0, 1);
-        addTileDownLeft(4, 1, 1);
+        tiles.add(new Tile(tiles.size(), 0, 2, 0, 0, radius));
+        addTileUp(0, 0, 1); // 1
+        addTileUpRight(0, 2, 1); // 2
+        addTileDownRight(0, 0, 1); // 3
+        addTileDown(0, 1, 1); // 4
+        addTileDownLeft(0, 1, 1); // 5
+        addTileUpLeft(0, 1, 1); // 6
+        addTileUpRight(2, 2, 1); // 7
+        addTileUp(2, 2, 1); // 8
+        addTileDownRight(2, 2, 1); // 9
+        addTileDown(3, 0, 1); // 10
+        addTileDownLeft(4, 1, 1); // 11
+        addTileDown(9, 0, 1); // 12
+        addTileUpRight(9, 2, 1); // 13
+        addTileUpLeft(5, 1, 1); // 14
         tiles.get(4).addPlayer(new Player(1, 1, radius));
         tiles.get(2).addPlayer(new Player(2, 2, radius));
+        tiles.get(13).addPlayer(new Player(2, 1, radius));
+        tiles.get(14).addPlayer(new Player(1, 2, radius));
         max = 2;
         connect();
+    }
+
+
+    private void fixTeam() {
+        int[] vals = new int[max+1];
+        Arrays.fill(vals, 2);
+        if (tiles.get(tiles.size() - 1).up!=null)
+        vals[tiles.get(tiles.size() - 1).up.team]+=5;
+        if (tiles.get(tiles.size() - 1).upright!=null)
+        vals[tiles.get(tiles.size() - 1).upright.team]+=5;
+        if (tiles.get(tiles.size() - 1).downright!=null)
+        vals[tiles.get(tiles.size() - 1).downright.team]+=5;
+        if (tiles.get(tiles.size() - 1).down!=null)
+        vals[tiles.get(tiles.size() - 1).down.team]+=5;
+        if (tiles.get(tiles.size() - 1).downleft!=null)
+        vals[tiles.get(tiles.size() - 1).downleft.team]+=5;
+        if (tiles.get(tiles.size() - 1).upleft!=null)
+        vals[tiles.get(tiles.size() - 1).upleft.team]+=5;
+        int[] x = count();
+        for (int i = 0; i <= max; i++) {
+            vals[i] *= (tiles.size()-x[i]);
+        }
+        double k = Math.random() * Arrays.stream(vals).sum();
+        for (int n = 0; n < vals.length; n++) {
+            if (k <= vals[n]) {
+                tiles.get(tiles.size() - 1).team = n;
+                break;
+            }
+        }
+    }
+
+    public void level2() {
+        max = 2;
+        tiles = new ArrayList<Tile>();
+        tiles.add(new Tile(tiles.size(), 0, 2, 0, 0, radius));
+        for (int i = 1; i <= max; i++) {
+            if (i%2==0) addTileDown(tiles.size()-1, i, 1);
+            else addTileUp(tiles.size()-1, i, 1);
+        }
+        while (tiles.size() < 100) {
+            int i = (int) (Math.random() * tiles.size());
+            int j = (int) (Math.random() * 6);
+            switch (j) {
+            case 0: {
+                if (tiles.get(i).up == null) {
+                    addTileUp(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            case 1: {
+                if (tiles.get(i).upright == null) {
+                    addTileUpRight(i,
+                            (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            case 2: {
+                if (tiles.get(i).downright == null) {
+                    addTileDownRight(i,
+                            (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            case 3: {
+                if (tiles.get(i).down == null) {
+                    addTileDown(i, (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            case 4: {
+                if (tiles.get(i).downleft == null) {
+                    addTileDownLeft(i,
+                            (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            case 5: {
+                if (tiles.get(i).upleft == null) {
+                    addTileUpLeft(i,
+                            (tiles.get(i).team + (int) (Math.pow(Math.random(), 0.1))) % (max + 1),
+                            (int) (Math.pow(Math.random(),8) * 5));
+                    fixTeam();
+                }
+            }
+                break;
+            }
+            connect();
+        }
+        for (int i = 0; i < 50; i++) {
+            int[] vals = countPlayers();
+            for (int j = 0; j <= max; j++) {
+                vals[j] = (int)Math.pow(tiles.size()-vals[j], 2);
+            }
+            double k = Math.random() * Arrays.stream(vals).sum();
+            for (int n = 1; n <= max; n++) {
+                if (k <= vals[n]) {
+                    int j = 0;
+                    while (n!=tiles.get(j).team) {
+                        j=(int)(Math.random()*tiles.size());
+                    }
+                    tiles.get(j).addPlayer(new Player(tiles.get(j).team, (int) (Math.pow(Math.random(), 4) * 4 +1), radius));
+                    break;
+                }
+            }
+        }
     }
 
     public void floodFill(int newComponent) {
@@ -147,7 +281,7 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
     }
 
     public void connect() {
-        for (int n = 0; n < 100; n++) // ensure that things 100 blocks away are connected
+        for (int n = 0; n < 1000; n++) // ensure that things 100 blocks away are connected
             for (int i = 0; i < tiles.size(); i++) {
                 tiles.get(i).radius = radius;
                 // clockwise
@@ -322,15 +456,16 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 if (tiles.get(i).polygon.contains((newx + wid / 2) / zoomFactor, (newy + hei / 2) / zoomFactor)) {
                     if (tiles.get(focus).p.type > 0) {
                         dijkstra();
-                        if (turn == tiles.get(focus).team && tiles.get(focus).p.played==false
+                        if (turn == tiles.get(focus).team && tiles.get(focus).p.played == false
                                 && tiles.get(focus).movePlayer(tiles.get(i), tiles.get(i).distance)) {
                             boolean works = false;
                             tiles.get(focus).p.played = true;
                             for (int j = 0; j < tiles.size(); j++) {
-                                if (tiles.get(j).p!=null && tiles.get(j).team == tiles.get(focus).team && tiles.get(j).p.type>0 && tiles.get(j).p.played) {
+                                if (tiles.get(j).p != null && tiles.get(j).team == tiles.get(focus).team
+                                        && tiles.get(j).p.type > 0 && tiles.get(j).p.played) {
                                     focus = i;
                                     hover = i;
-                                    repaint();                                            
+                                    repaint();
                                     break loop;
                                 }
                             }
@@ -348,7 +483,8 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                                         }
                                     }
                                 }
-                                if (!hasp) works = true;
+                                if (!hasp)
+                                    works = true;
                             }
                             focus = i;
                             hover = i;

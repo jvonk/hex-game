@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.Color;
 
 public class Tile implements Comparable {
-    public int id, team, type, distance, component, value, difficulty;
+    public int id, team, distance, component, value, difficulty;
     public boolean visited;
     public double x, y, radius;
     public Polygon polygon;
@@ -11,13 +11,12 @@ public class Tile implements Comparable {
     public Player p;
     public Color color;
 
-    public Tile(int id, int team, int type, double x, double y, double r) {
+    public Tile(int id, int team, int difficulty, double x, double y, double r) {
         this.id = id;
         this.team = team;
-        this.type = type;
         this.component = -1;
         this.value = 1;
-        this.difficulty = 1;
+        this.difficulty = difficulty;
         this.x = x;
         this.y = y;
         this.radius = r;
@@ -65,17 +64,48 @@ public class Tile implements Comparable {
         dest.color = color;
         return true;
     }
-
+    private Polygon makePolygon(double[] c) {
+        Polygon p = new Polygon();
+        for (int i = 0; i < c.length; i++) {
+            p.addPoint((int)(polygon.xpoints[(int)c[i]]*(c[i]%1) + polygon.xpoints[(int)c[i]+1]*(1- (c[i]%1))), (int)(polygon.ypoints[(int)c[i]]*(c[i]%1) + polygon.ypoints[(int)c[i]+1]*(1- (c[i]%1))));
+        }
+        return p;
+    }
     public void drawMe(Graphics2D g, boolean isFocus, boolean showMove) {
         g.setColor(color);
         g.fillPolygon(polygon);
+        switch(difficulty) {
+            case 0: {
+
+            }
+            case 2: {
+                //3, 4.5, 0.5, 1, 2
+                //g.setColor(new Color(50, 50, 50));
+                //g.fillPolygon(makePolygon(new double[] {2.5, 5.5, 0, 1, 2}));
+                //g.setColor(new Color(100, 100, 100));
+                //g.fillPolygon(makePolygon(new double[] {3, 4.5, 0.5, 1, 2}));
+            }
+            case 3: {
+
+            }
+        }
         g.setColor(new Color(255, 255, 255, (showMove ? 70 : 0) + (isFocus ? 100 : 0)));
         g.fillPolygon(polygon);
         g.setColor(new Color(100, 100, 100));
         g.drawPolygon(polygon);
         p.drawMe(g, x, y);
+        g.setColor(new Color(0, 0, 0, 130));
+        Polygon p = new Polygon();
+        for (int i = 0; i < 6; i++) {
+            p.addPoint((int) (Math.round(Math.cos(Math.PI * i / 3) * this.radius*(this.difficulty-1)/5 + this.x)),
+                    (int) (Math.round(Math.sin(Math.PI * i / 3) * this.radius*(this.difficulty-1)/5 + this.y)));
+        }
+        g.fillPolygon(p);
         g.setColor(new Color(0, 0, 0));
-        g.drawString(String.valueOf(distance), (int) (x - 4), (int) (y + 6));
+
+        //g.drawString(String.valueOf(distance), (int) (x - g.getFontMetrics().stringWidth(String.valueOf(distance))/2), (int) (y + g.getFontMetrics().getMaxAscent()/2 - g.getFontMetrics().getMaxDescent()/2));
+        
+        g.drawString(String.valueOf(id), (int) (x - g.getFontMetrics().stringWidth(String.valueOf(id))/2), (int) (y + g.getFontMetrics().getMaxAscent()/2 - g.getFontMetrics().getMaxDescent()/2));
     }
 
     public void drawMe(Graphics2D g, int a) {
