@@ -22,6 +22,7 @@ public class Tile implements Comparable {
         this.radius = r;
         this.polygon = new Polygon();
         this.p = new Player(team, 0, radius);
+        this.p.played=false;
         switch (team) {
         case 1:
             color = new Color(106, 197, 244);
@@ -52,8 +53,8 @@ public class Tile implements Comparable {
                 team = p.team;
             else
                 p.team = team;
-                check();
-                check();
+            check();
+            check();
         }
     }
 
@@ -73,13 +74,14 @@ public class Tile implements Comparable {
     }
 
     public boolean movePlayer(Tile dest, int dist) {
-        if (!p.move(dest, dist))
+        if (!p.move(dest, dist) || p.played)
             return false;
         Player temp = p;
         p = new Player(team, 0, radius);
         dest.p = temp;
         dest.team = team;
         dest.color = color;
+        p.played=true;
         return true;
     }
 
@@ -98,7 +100,7 @@ public class Tile implements Comparable {
     public void drawMe(Graphics2D g, boolean isFocus, boolean showMove) {
         g.setColor(color);
         g.fillPolygon(polygon);
-        switch (difficulty) {
+        /*switch (difficulty) {
         case 0: {
 
         }
@@ -112,19 +114,14 @@ public class Tile implements Comparable {
         case 3: {
 
         }
-        }
+        }*/
         g.setColor(new Color(255, 255, 255, (showMove ? 70 : 0) + (isFocus ? 100 : 0)));
         g.fillPolygon(polygon);
         g.setColor(new Color(100, 100, 100));
         g.drawPolygon(polygon);
         p.drawMe(g, x, y);
         g.setColor(new Color(0, 0, 0, 130));
-        Polygon p = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            p.addPoint((int) (Math.round(Math.cos(Math.PI * i / 3) * this.radius * (this.difficulty - 1) / 5 + this.x)),
-                    (int) (Math.round(Math.sin(Math.PI * i / 3) * this.radius * (this.difficulty - 1) / 5 + this.y)));
-        }
-        g.fillPolygon(p);
+        g.fillRect((int)(x-this.radius * (this.difficulty - 1) / 10), (int)(y-this.radius * (this.difficulty - 1) / 10), (int)(this.radius * (this.difficulty - 1) / 5), (int)(this.radius * (this.difficulty - 1) / 5));
         g.setColor(new Color(0, 0, 0));
 
         // g.drawString(String.valueOf(distance), (int) (x -

@@ -37,7 +37,7 @@ public class Player {
     }
 
     public boolean move(Tile dest, int dist) {
-        if (dist > type) return false;
+        if (dist > type || this.played) return false;
         if (dest.p != null)
             return dest.p.type <= type;
         return true;
