@@ -195,8 +195,12 @@ public class Board extends JPanel implements KeyListener, MouseListener, MouseMo
                 }
             }
         }
+        for (int k = 0; k < 10; k++)
         for (int i = 0; i < tiles.size(); i++) {
             fixTeam(tiles.get(i));
+        }
+        for (int k = 0; k < 10; k++)
+        for (int i = 0; i < tiles.size(); i++) {
             tiles.get(i).check();
         }
     }

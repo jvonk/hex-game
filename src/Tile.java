@@ -68,6 +68,7 @@ public class Tile implements Comparable {
     public void addPlayer(Player newPlayer) {
         if (newPlayer.move(this, 0)) {
             p = newPlayer;
+            team = p.team;
         }
     }
 
